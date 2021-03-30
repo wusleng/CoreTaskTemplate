@@ -20,12 +20,12 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void createUsersTable() {
 
-        final String create = "CREATE TABLE IF NOT EXISTS `mybd`.`users` (\n" +
-                "  `id` INT NOT NULL AUTO_INCREMENT,\n" +
-                "  `name` VARCHAR(45) NOT NULL,\n" +
-                "  `lastName` VARCHAR(45) NOT NULL,\n" +
-                "  `age` INT(2) NULL,\n" +
-                "  PRIMARY KEY (`id`));";;
+        final String create = "CREATE TABLE IF NOT EXISTS user2 (\n" +
+                "  id INT NOT NULL AUTO_INCREMENT,\n" +
+                "  name VARCHAR(45) NOT NULL,\n" +
+                "  lastName VARCHAR(45) NOT NULL,\n" +
+                "  age INT(2) NULL,\n" +
+                "  PRIMARY KEY (id));";;
 
         Transaction transaction = null;
 

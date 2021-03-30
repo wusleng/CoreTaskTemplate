@@ -42,7 +42,7 @@ public class Util {
                 properties.put(Environment.SHOW_SQL, true);
                 properties.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 properties.put(Environment.ORDER_UPDATES, "true");
-                properties.put(Environment.HBM2DDL_AUTO, "create-drop");
+                properties.put(Environment.HBM2DDL_AUTO, "update");
 
                 Configuration configuration = new Configuration();
                 configuration.setProperties(properties);
