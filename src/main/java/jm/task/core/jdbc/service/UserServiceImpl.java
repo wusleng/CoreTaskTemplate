@@ -11,8 +11,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserServiceImpl implements UserService  {
+public class UserServiceImpl implements UserService {
     UserDao usd = new UserDaoJDBCImpl();
+
+    public UserServiceImpl() {
+    }
 
     public void createUsersTable() throws SQLException, ClassNotFoundException {
         usd.createUsersTable();
@@ -24,7 +27,7 @@ public class UserServiceImpl implements UserService  {
     }
 
     public void saveUser(String name, String lastName, byte age) throws SQLException, ClassNotFoundException {
-        usd.saveUser(name,lastName, age);
+        usd.saveUser(name, lastName, age);
     }
 
     public void removeUserById(long id) throws SQLException, ClassNotFoundException {

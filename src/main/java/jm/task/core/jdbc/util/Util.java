@@ -14,8 +14,10 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
+    private static SessionFactory sessionFactory;
+    private static ServiceRegistry serviceRegistry;
+
     public static Connection getConnectionToDatabase() throws ClassNotFoundException, SQLException {
-        //Connect in different ways - коннект разными способами
         final String DB_URL = "jdbc:mysql://localhost:3306/mydb?serverTimezone=UTC"; // connect with jdbc
         final String DB_Driver = "java.sql.Driver";
 
@@ -23,13 +25,8 @@ public class Util {
         System.out.println("Соединение с СУБД выполнено.");
 
         return connection;
-
     }
 
-    private static SessionFactory sessionFactory;
-    private static ServiceRegistry serviceRegistry;
-
-    // Hibernate connection
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
