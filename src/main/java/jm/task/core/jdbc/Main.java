@@ -31,23 +31,6 @@ public class Main {
             userServ.dropUsersTable();
             Util.getConnectionToDatabase().close();
 
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            UserDaoHibernateImpl userHib = new UserDaoHibernateImpl();
-            Util.getSessionFactory();
-            userHib.createUsersTable();
-            userHib.saveUser("John", "Nikson", (byte) 56);
-            userHib.saveUser("Sarah", "Konor", (byte) 34);
-            userHib.saveUser("Peter", "Mexes", (byte) 33);
-            userHib.saveUser("Leam", "Howlet", (byte) 51);
-
-            System.out.println(userHib.getAllUsers());
-
-            userHib.removeUserById(3);
-            userHib.cleanUsersTable();
-            userHib.dropUsersTable();
-            Util.getSessionFactory().close();
-
     }
 
 }
