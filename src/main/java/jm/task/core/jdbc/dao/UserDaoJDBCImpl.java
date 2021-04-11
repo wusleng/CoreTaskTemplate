@@ -2,6 +2,7 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.sql.*;
@@ -20,6 +21,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private final String showALL = "SELECT * FROM user2;";
     private final String clean = "DELETE FROM user2;";
     private final String drop = "TRUNCATE user2;";
+    private final String INSERT = "INSERT INTO user2 VALUES(id,?,?,?)";
     private Connection connect = Util.getConnectionToDatabase();
 
 
@@ -29,63 +31,105 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try (Statement statement2 = connect.createStatement()) {
+            connect.setAutoCommit(false);
             statement2.executeUpdate(create);
             System.out.println("Таблица создана успешно");
+            connect.commit();
         } catch (Exception ex) {
+            try {
+                connect.rollback();
+                System.out.println("таблица не создалась");
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             System.out.println(ex);
+        } finally {
+            try {
+                connect.setAutoCommit(true);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 
     public void dropUsersTable() {
         try (Statement statement2 = connect.createStatement()) {
+            connect.setAutoCommit(false);
             statement2.executeUpdate(drop);
             System.out.println("Таблица удалена");
+            connect.commit();
         } catch (Exception ex) {
+            try {
+                connect.rollback();
+                System.out.println();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             System.out.println(ex);
+        } finally {
+            try {
+                connect.setAutoCommit(true);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
         System.out.println("Соединение закрыто");
     }
 
     public void saveUser(String name, String lastName, byte age) {
 
-        String INSERT = "INSERT INTO users VALUES(id,?,?,?)";
-        Transaction transaction;
-
-        try (PreparedStatement preparedStatement = connect.prepareStatement(INSERT)){
+        try (PreparedStatement preparedStatement = connect.prepareStatement(INSERT)) {
+            connect.setAutoCommit(false);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setInt(3, age);
             preparedStatement.executeUpdate();
-            Util.getConnectionToDatabase().commit();
-        } catch (SQLException | NullPointerException ex){
-            ex.printStackTrace();
+            connect.commit();
+        } catch (SQLException | NullPointerException throwables) {
             try {
-                Util.getConnectionToDatabase().rollback();
+                connect.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            throwables.printStackTrace();
+        } finally {
+            try {
+                connect.setAutoCommit(true);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
-            } finally {
-                try {
-                    connect.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
             }
         }
     }
 
     public void removeUserById(long id) {
-        try (Statement   statement2 = connect.createStatement()) {
-            statement2.executeUpdate(String.format(remove, id));
+        try (PreparedStatement preparedStatement = connect.prepareStatement(remove)) {
+            connect.setAutoCommit(false);
+            preparedStatement.executeUpdate(String.format(remove, id));
             System.out.println("удаление юзера под id= " + id + " выполнено");
+            connect.commit();
         } catch (Exception ex) {
-            System.out.println(ex);
+            try {
+                connect.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            ex.printStackTrace();
+        } finally {
+            try {
+                connect.setAutoCommit(true);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
         System.out.println("Соединение закрыто");
     }
 
     public List<User> getAllUsers() {
+
         List<User> list = null;
+
         try (Statement statement2 = connect.createStatement()) {
+            connect.setAutoCommit(false);
             list = new ArrayList<>();
             ResultSet resultSet = statement2.executeQuery(showALL);
             while (resultSet.next()) {
@@ -93,8 +137,20 @@ public class UserDaoJDBCImpl implements UserDao {
                         , resultSet.getString("lastname")
                         , resultSet.getByte("age")));
             }
+            connect.commit();
         } catch (Exception ex) {
-            System.out.println(ex);
+            try {
+                connect.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } finally {
+                try {
+                    connect.setAutoCommit(true);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            ex.printStackTrace();
         }
         System.out.println("Соединение закрыто");
         return list;
@@ -102,10 +158,23 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void cleanUsersTable() {
         try (Statement statement2 = connect.createStatement()) {
+            connect.setAutoCommit(false);
             statement2.executeUpdate(clean);
             System.out.println("Удаление выполнено");
+            connect.commit();
         } catch (Exception ex) {
-            System.out.println(ex);
+            try {
+                connect.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } finally {
+                try {
+                    connect.setAutoCommit(true);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            ex.printStackTrace();
         }
         System.out.println("Соединение закрыто");
     }
