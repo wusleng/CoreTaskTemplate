@@ -5,6 +5,7 @@ import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +17,9 @@ public class UserDaoHibernateImpl implements UserDao {
             " age TINYINT not NULL," +
             " PRIMARY KEY (id))";
 
-    private final String remove = "DELETE FROM user2 WHERE id=?";
     private final String showALL = "SELECT * FROM user2";
     private final String clean = "DELETE FROM user2;";
     private final String drop = "TRUNCATE user2";
-    private final String INSERT = "INSERT INTO user2 VALUES(id,?,?,?)";
 
 
     public UserDaoHibernateImpl() {
@@ -60,7 +59,8 @@ public class UserDaoHibernateImpl implements UserDao {
         Transaction transaction = null;
         try (Session session = Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(new User(name, lastName, age));
+            User user = new User(name, lastName, age);
+            session.save(user);
             transaction.commit();
         } catch (Exception ex) {
             if (transaction != null) {
@@ -68,6 +68,7 @@ public class UserDaoHibernateImpl implements UserDao {
             }
         }
     }
+
 
     @Override
     public void removeUserById(long id) {
@@ -89,9 +90,9 @@ public class UserDaoHibernateImpl implements UserDao {
         Transaction transaction = null;
         List<User> list = new ArrayList<>();
         try (Session session = Util.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
             list = (List<User>) session.createQuery("From User ").list();
-            transaction.commit();
-
+            session.getTransaction().commit();
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
@@ -104,13 +105,15 @@ public class UserDaoHibernateImpl implements UserDao {
     public void cleanUsersTable() {
         Transaction transaction = null;
         try (Session session = Util.getSessionFactory().openSession()) {
-            Query query = session.createSQLQuery(clean).addEntity(User.class);
-            query.executeUpdate();
-            transaction.commit();
+            transaction = session.beginTransaction();
+            session.createSQLQuery(clean).addEntity(User.class).executeUpdate();
+            session.getTransaction().commit();
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
+                System.out.println("Транзакция была откачена для метода CleanTable");
             }
+            ex.printStackTrace();
         }
     }
 }

@@ -29,7 +29,7 @@ public class Main {
             userServ.removeUserById(2);
             userServ.cleanUsersTable();
             userServ.dropUsersTable();
-            Util.getConnectionToDatabase().close();
+
 
     }
 
