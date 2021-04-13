@@ -36,6 +36,7 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
+                System.out.println("Таблица не создана !!!!");
             }
         }
     }
@@ -50,6 +51,7 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
+                System.out.println("Таблица не удалена !!!");
             }
         }
     }
@@ -65,6 +67,7 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
+                System.out.println("Пользователь не сохранен!!!");
             }
         }
     }
@@ -81,6 +84,7 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
+                System.out.println("Пользователь не удален !!!!");
             }
         }
     }
@@ -96,6 +100,7 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (Exception ex) {
             if (transaction != null) {
                 transaction.rollback();
+                System.out.println("Транзакция была откачена для метода getAllUsers");
             }
         }
         return list;
